@@ -20,8 +20,23 @@
               "icon": "lucide-file",
               "title": "ТЗ"
             }
+          },
+          {
+            "id": "d9ae193e6db6bd16",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Git & Github - Правила пушей.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Git & Github - Правила пушей"
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -99,7 +114,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ТЗ.md",
+                "file": "Git & Github - Правила пушей.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -118,7 +133,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ТЗ.md",
+                "file": "Git & Github - Правила пушей.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -161,7 +176,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ТЗ.md",
+                "file": "Git & Github - Правила пушей.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -188,10 +203,11 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "8d70da91b06ae897",
+  "active": "d9ae193e6db6bd16",
   "lastOpenFiles": [
-    "Pasted image 20260805113111.png",
     "ТЗ.md",
+    "Git & Github - Правила пушей.md",
+    "Pasted image 20260805113111.png",
     "Pasted image 20260805113044.png"
   ]
 }
