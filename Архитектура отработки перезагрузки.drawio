@@ -1,0 +1,210 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Страница-1" id="JiPPC3mpQh_8J6onvmBN">
+    <mxGraphModel dx="1030" dy="622" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-1" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;fillColor=#6d8764;fontColor=#ffffff;strokeColor=#3A5431;" value="Сервис &quot;Чекаем ПК и чекаем сообщения пользователей под серией кнопок в боте для перезагрузки&quot; (наш основной) :&lt;div&gt;&lt;span&gt;FastAPI + pybotx, FSM&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="150" width="150" x="240" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-8" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="145" width="145" x="270" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-2" parent="Jtr1JIZ-NI3ttbCKcMUJ-8" style="whiteSpace=wrap;html=1;aspect=fixed;" value="Naumen" vertex="1">
+          <mxGeometry height="145" width="145" x="24" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-3" parent="Jtr1JIZ-NI3ttbCKcMUJ-8" style="whiteSpace=wrap;html=1;aspect=fixed;" value="CMDB (БД)" vertex="1">
+          <mxGeometry height="50" width="50" x="24" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-9" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;dashed=1;" value="AD: домен, svc-аккаунт, GPO" vertex="1">
+          <mxGeometry height="80" width="80" x="650" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-20" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="200" width="200" x="200" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-14" parent="Jtr1JIZ-NI3ttbCKcMUJ-20" style="whiteSpace=wrap;html=1;aspect=fixed;" value="express.nsd.ru (аккаунт Валеры)" vertex="1">
+          <mxGeometry height="200" width="200" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-16" parent="Jtr1JIZ-NI3ttbCKcMUJ-20" style="whiteSpace=wrap;html=1;aspect=fixed;" value="Чат-бот Валера" vertex="1">
+          <mxGeometry height="70" width="70" x="130" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-21" edge="1" parent="1" source="Jtr1JIZ-NI3ttbCKcMUJ-9" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="Jtr1JIZ-NI3ttbCKcMUJ-3" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="980" />
+            </Array>
+            <mxPoint x="390" y="340" as="sourcePoint" />
+            <mxPoint x="440" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-26" connectable="0" parent="Jtr1JIZ-NI3ttbCKcMUJ-21" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="ПК &amp;lt;&amp;gt; есть в домене?" vertex="1">
+          <mxGeometry relative="1" x="-0.2366" y="-1" as="geometry">
+            <mxPoint x="48" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-22" parent="1" style="whiteSpace=wrap;html=1;aspect=fixed;dashed=1;" value="Пользователь" vertex="1">
+          <mxGeometry height="80" width="80" x="240" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-23" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.9;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=1;exitDx=0;exitDy=0;fillColor=#6d8764;strokeColor=light-dark(#3A5431,#FFFFFF);entryPerimeter=0;dashed=1;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="300" y="130" as="sourcePoint" />
+            <mxPoint x="370" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-49" connectable="0" parent="Jtr1JIZ-NI3ttbCKcMUJ-23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="нажимает серию кнопок для выбора ПК из списка&amp;nbsp;" vertex="1">
+          <mxGeometry relative="1" x="0.1445" y="-2" as="geometry">
+            <mxPoint x="82" y="3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-8" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;fillColor=#fa6800;strokeColor=#C73500;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="380" y="480" as="sourcePoint" />
+            <mxPoint x="380" y="608.35" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-9" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#fa6800;fontColor=#000000;labelBorderColor=#C73500;" value="webhook [JSON]&lt;div&gt;передача команд из кнопок&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.1804" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-1" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0;exitDx=0;exitDy=0;fillColor=#fa6800;strokeColor=light-dark(#C73500,#FFFFFF);entryX=0;entryY=1;entryDx=0;entryDy=0;dashed=1;" target="Jtr1JIZ-NI3ttbCKcMUJ-22" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="210" />
+            </Array>
+            <mxPoint x="250" y="280" as="sourcePoint" />
+            <mxPoint x="160" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-47" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="ответ Валеры" vertex="1">
+          <mxGeometry relative="1" x="0.2462" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-10" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0;exitDx=0;exitDy=0;fillColor=#6d8764;strokeColor=#3A5431;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="590" />
+            </Array>
+            <mxPoint x="240" y="620" as="sourcePoint" />
+            <mxPoint x="240" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-11" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#6d8764;fontColor=#ffffff;labelBorderColor=#3A5431;" value="REST API [JSON]&lt;div&gt;инициация отправки сообщений/кнопок&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.2677" y="2" as="geometry">
+            <mxPoint x="-48" y="39" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-19" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Целевые ПК" vertex="1">
+          <mxGeometry height="60" width="120" x="230" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-20" edge="1" parent="1" source="Jtr1JIZ-NI3ttbCKcMUJ-9" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;dashed=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" target="RcchNfEkfbuKoOhkhuqk-19" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="1110" />
+              <mxPoint x="360" y="1190" />
+            </Array>
+            <mxPoint x="450" y="1090" as="sourcePoint" />
+            <mxPoint x="400" y="1140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-23" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Включен WinRM, файрвол,&amp;nbsp;&lt;div&gt;права svc-аккаунта?&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.5602" as="geometry">
+            <mxPoint x="-205" y="162" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-21" edge="1" parent="1" source="Jtr1JIZ-NI3ttbCKcMUJ-1" style="curved=1;endArrow=classic;html=1;rounded=0;entryX=0.083;entryY=0;entryDx=0;entryDy=0;fillColor=#6d8764;strokeColor=#3A5431;exitX=0;exitY=1;exitDx=0;exitDy=0;entryPerimeter=0;" target="RcchNfEkfbuKoOhkhuqk-19" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="180" y="870" />
+              <mxPoint x="170" y="970" />
+              <mxPoint x="240" y="1050" />
+              <mxPoint x="302.5" y="1105" />
+            </Array>
+            <mxPoint x="250" y="760" as="sourcePoint" />
+            <mxPoint x="350" y="1109" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-22" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-21" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#6d8764;fontColor=#ffffff;labelBorderColor=#3A5431;" value="WinRM / SSH: shutdown /r" vertex="1">
+          <mxGeometry relative="1" x="-0.596" y="1" as="geometry">
+            <mxPoint x="-2" y="137" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-25" edge="1" parent="1" source="Jtr1JIZ-NI3ttbCKcMUJ-9" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;fillColor=#fa6800;strokeColor=#C73500;entryX=0.861;entryY=0.981;entryDx=0;entryDy=0;entryPerimeter=0;" target="Jtr1JIZ-NI3ttbCKcMUJ-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="439" y="760" />
+              <mxPoint x="389" y="810" />
+            </Array>
+            <mxPoint x="439" y="810" as="sourcePoint" />
+            <mxPoint x="375.6" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-31" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#fa6800;fontColor=#000000;labelBorderColor=#C73500;" value="Проверка svc-аккаунта" vertex="1">
+          <mxGeometry relative="1" x="-0.5361" y="3" as="geometry">
+            <mxPoint x="-12" y="-50" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-28" edge="1" parent="1" source="Jtr1JIZ-NI3ttbCKcMUJ-9" style="endArrow=classic;html=1;rounded=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;dashed=1;" target="Jtr1JIZ-NI3ttbCKcMUJ-3" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="380" y="1070" />
+            </Array>
+            <mxPoint x="350" y="980" as="sourcePoint" />
+            <mxPoint x="400" y="930" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-29" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-28" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Ответ - есть ли в&amp;nbsp;&lt;div&gt;домене ПК &amp;lt;&amp;gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.2664" as="geometry">
+            <mxPoint x="-159" y="-9" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-4" edge="1" parent="1" style="endArrow=classic;html=1;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=1;exitDx=0;exitDy=0;fillColor=#6d8764;strokeColor=#3A5431;" target="Jtr1JIZ-NI3ttbCKcMUJ-3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="760" as="sourcePoint" />
+            <mxPoint x="325" y="860" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Jtr1JIZ-NI3ttbCKcMUJ-7" connectable="0" parent="Jtr1JIZ-NI3ttbCKcMUJ-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#6d8764;fontColor=#ffffff;labelBorderColor=#3A5431;" value="Найди такие ПК &amp;lt;&amp;gt; у пользователя&lt;div&gt;&amp;nbsp;&amp;lt;&amp;gt; :&amp;nbsp;&lt;span style=&quot;background-color: light-dark(rgb(109, 135, 100), rgb(113, 135, 105)); color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18));&quot;&gt;REST [JSON] :&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: light-dark(rgb(109, 135, 100), rgb(113, 135, 105)); color: light-dark(rgb(255, 255, 255), rgb(18, 18, 18));&quot;&gt;GET /api/assets/by_user?user_id=…&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.4194" y="-1" as="geometry">
+            <mxPoint x="17" y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-37" edge="1" parent="1" source="Jtr1JIZ-NI3ttbCKcMUJ-3" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;fillColor=#fa6800;strokeColor=#C73500;" value="">
+          <mxGeometry height="50" relative="1" width="50" x="0.7695" y="1" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="210" y="960" />
+              <mxPoint x="200" y="900" />
+              <mxPoint x="260" y="830" />
+            </Array>
+            <mxPoint x="319" y="840" as="sourcePoint" />
+            <mxPoint x="267.6" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-38" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-37" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=#fa6800;fontColor=#000000;labelBorderColor=#C73500;" value="ПК есть/нет" vertex="1">
+          <mxGeometry relative="1" x="0.7749" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-39" edge="1" parent="1" source="RcchNfEkfbuKoOhkhuqk-19" style="curved=1;endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;dashed=1;" target="Jtr1JIZ-NI3ttbCKcMUJ-9" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="1300" />
+              <mxPoint x="510" y="1270" />
+              <mxPoint x="540" y="1200" />
+              <mxPoint x="580" y="1130" />
+            </Array>
+            <mxPoint x="410" y="1159" as="sourcePoint" />
+            <mxPoint x="460" y="1109" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="RcchNfEkfbuKoOhkhuqk-40" connectable="0" parent="RcchNfEkfbuKoOhkhuqk-39" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Kerberos/NTLM: проверка svc-аккаунта" vertex="1">
+          <mxGeometry relative="1" x="0.3765" y="12" as="geometry">
+            <mxPoint x="133" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
