@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "PLAN.md",
+                "file": "АРХИТЕКТУРА.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PLAN"
+              "title": "АРХИТЕКТУРА"
             }
           }
         ],
@@ -233,11 +233,13 @@
   },
   "active": "2eb993be7101cacb",
   "lastOpenFiles": [
+    "ТЗ.md",
+    "Git & Github - Правила пушей.md",
+    "mermaid-1786441992150.png",
+    "Pasted image 20260811125236.png",
+    "PLAN.md",
     "Архитектура отработки перезагрузки.drawio",
     "АРХИТЕКТУРА.md",
-    "PLAN.md",
-    "Git & Github - Правила пушей.md",
-    "ТЗ.md",
     "Pasted image 20260805113111.png",
     "Pasted image 20260805113044.png"
   ]
