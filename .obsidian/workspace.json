@@ -64,7 +64,7 @@
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -231,7 +231,7 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "2eb993be7101cacb",
+  "active": "8d70da91b06ae897",
   "lastOpenFiles": [
     "pc-reboot-chatbot-v.1/^PROMPT HERE.txt",
     "pc-reboot-chatbot-v.1/^PROMPT HERE",
