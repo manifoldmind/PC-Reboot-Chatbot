@@ -1,13 +1,13 @@
 import sys
-from core.models import RebootTask, RebootStatus
-# Импортируем нашу функцию из предыдущего шага
-# Убедись, что ты сохранила process_task в файл core/reboot.py 
-# или временно импортируй её прямо здесь для теста, если ещё не выносила.
-from core.reboot import process_task     
 import argparse
+from pathlib import Path
+from core.models import RebootTask, RebootStatus
+from core.reboot import process_task
+from core.logger import log_result
 
-#STUB:
-ALLOWED_HOSTS = {"WS-K534D", "WS-K534F"} # Пока захардкодим белый список
+# STUB: Пока захардкодим белый список
+ALLOWED_HOSTS = {"WS-K534D", "WS-K534F"} 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="PCReboot CLI v2.0")
     
@@ -16,6 +16,13 @@ def parse_args():
         "--hosts", 
         type=str, 
         help="Список хостов через запятую (например: PC-01,PC-02)"
+    )
+    
+    # Аргумент для файла со списком
+    parser.add_argument(
+        "--file",
+        type=str,
+        help="Путь к файлу со списком хостов (по одному на строку)"
     )
     
     # Флаг dry-run
@@ -27,15 +34,24 @@ def parse_args():
 
     return parser.parse_args()
 
-def create_tasks(hosts_str: str, run_id: str, dry_run: bool) -> list[RebootTask]:
-    """Список хостов -> список объектов RebootTask"""
-    
-    if not hosts_str:
-        return []
-    
+def load_hosts_from_file(file_path: str) -> list[str]:
+    """Читает хосты из файла, игнорируя пустые строки."""
+    path = Path(file_path)
+    if not path.exists():
+        print(f"Ошибка: файл {file_path} не найден.")
+        sys.exit(1)
+        
+    hosts = []
+    with open(path, 'r', encoding='utf-8') as f:
+        for line in f:
+            host = line.strip()
+            if host:
+                hosts.append(host)
+    return hosts
+
+def create_tasks(hosts_list: list[str], run_id: str, dry_run: bool) -> list[RebootTask]:
+    """Превращает список строк в список объектов RebootTask."""
     tasks = []
-    hosts_list = [host for host in hosts_str.split(' ')]
-    
     for host in hosts_list:
         task = RebootTask(
             host=host.upper(), 
@@ -43,36 +59,48 @@ def create_tasks(hosts_str: str, run_id: str, dry_run: bool) -> list[RebootTask]
             dry_run=dry_run
         )
         tasks.append(task)
-        
+    
+    
     return tasks
 
 def main():
     args = parse_args()
     
-    if not args.hosts:
-        print("Ошибка: необходимо указать хотя бы один хост через --hosts")
+    hosts_list = []
+    
+    # 1. Определяем источник хостов
+    if args.hosts:
+        # Если передан --hosts, разбиваем строку по запятой
+        hosts_list = [h.strip() for h in args.hosts.split(",") if h.strip()]
+    elif args.file:
+        # Если передан --file, читаем из файла
+        hosts_list = load_hosts_from_file(args.file)
+    else:
+        print("Ошибка: необходимо указать хосты через --hosts или --file")
         sys.exit(1)
-        
-    #STUB:
-    run_id = "manual-run-001" # Пока статический ID
+
+    if not hosts_list:
+        print("Ошибка: список хостов пуст.")
+        sys.exit(1)
+
+    # STUB:
+    run_id = "manual-run-001" 
     
     print(f"Запуск режима: {'DRY-RUN' if args.dry_run else 'REAL'}")
-    print(f"Целевые хосты: {args.hosts}")
+    print(f"Найдено хостов: {len(hosts_list)}")
     print("-" * 30)
 
-    # 1. Создаем задачи
-    tasks = create_tasks(args.hosts, run_id, args.dry_run)
+    # 2. Создаем задачи
+    tasks = create_tasks(hosts_list, run_id, args.dry_run)
     
-    # 2. Обрабатываем каждую задачу через ядро
+    # 3. Обрабатываем каждую задачу через ядро
     for task in tasks:
-        result = process_task(task, ALLOWED_HOSTS)
+        result = process_task(task, ALLOWED_HOSTS)        
+        # Записываем в лог
+        log_result(result)
         
-        # 3. Выводим результат
+        # 4. Выводим результат
         print(f"[{result.status.value}] {result.host}: {result.message}")
 
 if __name__ == "__main__":
     main()
-        
-
-
-# Далее журнал запускающихся тасок...

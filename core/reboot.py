@@ -1,4 +1,4 @@
-from models import RebootTask, RebootResult, RebootStatus
+from .models import RebootTask, RebootResult, RebootStatus
 from datetime import datetime
 
 #CONFIRMED:DONE
