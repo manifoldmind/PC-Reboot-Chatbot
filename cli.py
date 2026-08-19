@@ -4,6 +4,8 @@ from pathlib import Path
 from core.models import RebootTask, RebootStatus
 from core.reboot import process_task
 from core.logger import log_result
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import Counter
 
 # STUB: Пока захардкодим белый список
 ALLOWED_HOSTS = {"WS-K534D", "WS-K534F"} 
@@ -92,15 +94,36 @@ def main():
 
     # 2. Создаем задачи
     tasks = create_tasks(hosts_list, run_id, args.dry_run)
-    
-    # 3. Обрабатываем каждую задачу через ядро
-    for task in tasks:
-        result = process_task(task, ALLOWED_HOSTS)        
-        # Записываем в лог
-        log_result(result)
+    max_tasks = min(5, len(tasks))
+    print(f"Обработка {len(tasks)} задач в {max_tasks} потока...")
+    print("-" * 30)
+
+    with ThreadPoolExecutor(max_workers=max_tasks) as executor:
+        # Отдаем задачи курьерам. 
+        # executor.submit возвращает "обещание" (Future), что результат скоро будет
+        future_to_task = {
+            executor.submit(process_task, task, ALLOWED_HOSTS): task 
+            for task in tasks
+        }
+
+        # as_completed ждет, пока ЛЮБОЙ курьер вернется с результатом
+        for future in as_completed(future_to_task):
+            result = future.result() # Забираем готовый RebootResult у курьера
+            
+            # Записываем результат в ЖУРНАЛ (лог)
+            log_result(result)
+            
+            # Выводим результат в консоль
+            print(f"[{result.status.value}] {result.host}: {result.message}")
+
+    # # 3. Обрабатываем каждую задачу через ядро
+    # for task in tasks:
+    #     result = process_task(task, ALLOWED_HOSTS)        
+    #     # Записываем в лог
+    #     log_result(result)
         
-        # 4. Выводим результат
-        print(f"[{result.status.value}] {result.host}: {result.message}")
+    #     # 4. Выводим результат
+    #     print(f"[{result.status.value}] {result.host}: {result.message}")
 
 if __name__ == "__main__":
     main()
