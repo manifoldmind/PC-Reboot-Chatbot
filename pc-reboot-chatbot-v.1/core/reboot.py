@@ -28,7 +28,7 @@ def process_task(task: RebootTask, allowed_hosts: set[str]) -> RebootResult: #WA
         res.message = f"Host {task.host} isn't in allowed list"
         return res
 
-        # 3. НОВОЕ: Pre-check порта WinRM
+    # Pre-check порта WinRM
     if not check_winrm_port(task.host):
         res.status = RebootStatus.PRECHECK_FAILED
         res.message = f"WinRM port 5985 is not accessible on {task.host}"
