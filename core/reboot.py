@@ -1,6 +1,7 @@
 from .models import RebootTask, RebootResult, RebootStatus
 from datetime import datetime
 import socket
+import winrm
 
 #CONFIRMED:DONE
 def process_task(task: RebootTask, allowed_hosts: set[str]) -> RebootResult: #WARN: task ТОЛЬКО ДЛЯ ВХОДНЫХ ЗАДАЧ от юзера, не состояние выполнения задачи
@@ -44,10 +45,28 @@ def process_task(task: RebootTask, allowed_hosts: set[str]) -> RebootResult: #WA
 
     # MADE: если не dry-run, пока вернуть COMMAND_ERROR
     # message: "Real backend not implemented yet"    
-    #STUB:
-    res.status=RebootStatus.COMMAND_ERROR
-    res.message="Real backend not implemented yet"
+    #HOLD:
+    # res.status=RebootStatus.COMMAND_ERROR
+    # res.message="Real backend not implemented yet"
+    # return res
+    
+    # Реальная отправка команды
+    success, msg = send_reboot_command(task.host, task.reboot_delay_sec)
+    
+    if success:
+        res.status = RebootStatus.COMMAND_SENT
+        res.message = msg
+    
+    else:
+        # Если ошибка авторизации - ставим AUTH_ERROR, иначе COMMAND_ERROR
+        if "Access Denied" in msg or "Unauthorized" in msg:
+            res.status = RebootStatus.AUTH_ERROR
+        else:
+            res.status = RebootStatus.COMMAND_ERROR
+        res.message = msg
+        
     return res
+    
 
 def check_winrm_port(host: str, port: int = 5985, timeout: int = 2) -> bool:
     """
@@ -68,15 +87,36 @@ def check_winrm_port(host: str, port: int = 5985, timeout: int = 2) -> bool:
     except (socket.timeout, OSError):
         return False
 
+def send_reboot_command(host: str, delay: int) -> tuple[bool, str]:
+    """
+    Отправляет команду перезагрузки через WinRM.
+    Возвращает (Успех, Сообщение).
+    """
+    #NOTE:WARN: !!!ИСПОЛЬЗУЕТСЯ АУТЕНТИФИКАЦИЯ ПРОФИЛЯ ОТ КОТОРОГО ЗАПУЩЕНА ПРОГРАММА (надо АДМ)
+    try:
+        # Создаем сессию. 
+        # transport='ntlm' или 'kerberos'. Если в домене, kerberos предпочтительнее.
+        # Если не указывать username/password, pywinrm попробует использовать текущую сессию Windows.
+        session = winrm.Session(host, auth=('dummy', 'dummy'), transport='ntlm') 
+        # Примечание: для Kerberos часто достаточно просто winrm.Session(host) без auth, 
+        # но для надежности теста начнем с явного указания транспорта.
 
-# # Тест с заведомо недоступным хостом
-# print(check_winrm_port("DEAD-PC-999"))  # Ожидаемо: False
+        # Формируем команду PowerShell для выполнения shutdown
+        cmd = f"shutdown /r /t {delay} /f"
 
-# # Тест с localhost (если WinRM не запущен локально)
-# print(check_winrm_port("localhost"))    # Ожидаемо: False
+        # Выполняем команду
+        response = session.run_ps(cmd)
+        
+        if response.status_code == 0:
+            return True, "Command sent successfully"
+        else:
+            # Декодируем ошибку из stderr
+            error_msg = response.std_err.decode('utf-8', errors='ignore')
+            return False, f"WinRM Error: {error_msg}"
+            
+    except Exception as e:
+        return False, f"Connection/Auth Error: {str(e)}"
 
-# # Тест с реальным хостом (если есть)
-# print(check_winrm_port("WS-K534D"))     # Зависит от среды
 
 if __name__ == "__main__":
     # Тест с заведомо недоступным хостом

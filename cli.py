@@ -98,6 +98,8 @@ def main():
     print(f"Обработка {len(tasks)} задач в {max_tasks} потока...")
     print("-" * 30)
 
+    
+    results = [] # Сбор результатов
     with ThreadPoolExecutor(max_workers=max_tasks) as executor:
         # Отдаем задачи курьерам. 
         # executor.submit возвращает "обещание" (Future), что результат скоро будет
@@ -112,18 +114,35 @@ def main():
             
             # Записываем результат в ЖУРНАЛ (лог)
             log_result(result)
+            results.append(result)
             
             # Выводим результат в консоль
             print(f"[{result.status.value}] {result.host}: {result.message}")
 
-    # # 3. Обрабатываем каждую задачу через ядро
-    # for task in tasks:
-    #     result = process_task(task, ALLOWED_HOSTS)        
-    #     # Записываем в лог
-    #     log_result(result)
-        
-    #     # 4. Выводим результат
-    #     print(f"[{result.status.value}] {result.host}: {result.message}")
+    # === БЛОК ИТОГОВОЙ СВОДКИ ===
+    print("\n" + "=" * 40)
+    print("ИТОГОВАЯ СВОДКА")
+    print("=" * 40)
+    print(f"Всего обработано: {len(results)}")
+
+    # Считаем, сколько каких статусов получилось
+    # Counter пройдется по списку и сделает словарь: {'SKIPPED': 2, 'NOT_ALLOWED': 1}
+    status_counts = Counter(result.status.value for result in results)
+
+    for status, count in status_counts.items():
+        print(f"{status}: {count}")
+
+    # Находим хосты, которые завершились с ошибкой (не SKIPPED и не REBOOT_CONFIRMED)
+    # Подсказка: используй list comprehension
+    failed_results = [r for r in results if r.status not in (RebootStatus.SKIPPED, RebootStatus.REBOOT_CONFIRMED)]
+
+    if failed_results:
+        print("\nТРЕБУЮТ ВНИМАНИЯ:")
+        for r in failed_results:
+            print(f" - {r.host}: {r.status.value} ({r.message})")
+    else:
+        print("\nВсе задачи выполнены успешно!")
+
 
 if __name__ == "__main__":
     main()
