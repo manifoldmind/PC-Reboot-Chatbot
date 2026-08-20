@@ -7,8 +7,22 @@ from core.logger import log_result
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections import Counter
 
-# STUB: Пока захардкодим белый список
-ALLOWED_HOSTS = {"WS-K534D", "WS-K534F"} 
+#NOTE: ALLOWED_HOSTS = файлик
+def load_allowed_hosts(file_path: str = "allowed_hosts.txt") -> set[str]:
+    """Загружает белый список хостов из файла."""
+    allowed = set()
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                host = line.strip().upper() # Приводим к верхнему регистру сразу
+                if host and not host.startswith('#'): # Игнорируем пустые строки и комментарии
+                    allowed.add(host)
+    except FileNotFoundError:
+        print(f"Предупреждение: файл {file_path} не найден. Белый список пуст.")
+    return allowed
+
+# Заменяем хардкод на вызов функции
+ALLOWED_HOSTS = load_allowed_hosts()
 
 def parse_args():
     parser = argparse.ArgumentParser(description="PCReboot CLI v2.0")
