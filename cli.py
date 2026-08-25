@@ -1,54 +1,39 @@
 import sys
 import argparse
 from pathlib import Path
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from core.models import RebootTask, RebootStatus
 from core.reboot import process_task
 from core.logger import log_result
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from collections import Counter
 
-#NOTE: ALLOWED_HOSTS = файлик
+
 def load_allowed_hosts(file_path: str = "allowed_hosts.txt") -> set[str]:
     """Загружает белый список хостов из файла."""
     allowed = set()
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             for line in f:
-                host = line.strip().upper() # Приводим к верхнему регистру сразу
-                if host and not host.startswith('#'): # Игнорируем пустые строки и комментарии
+                host = line.strip().upper()
+                if host and not host.startswith('#'):
                     allowed.add(host)
     except FileNotFoundError:
         print(f"Предупреждение: файл {file_path} не найден. Белый список пуст.")
     return allowed
 
-# Заменяем хардкод на вызов функции
+
 ALLOWED_HOSTS = load_allowed_hosts()
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description="PCReboot CLI v2.0")
-    
-    # Аргумент для списка хостов
-    parser.add_argument(
-        "--hosts", 
-        type=str, 
-        help="Список хостов через запятую (например: PC-01,PC-02)"
-    )
-    
-    # Аргумент для файла со списком
-    parser.add_argument(
-        "--file",
-        type=str,
-        help="Путь к файлу со списком хостов (по одному на строку)"
-    )
-    
-    # Флаг dry-run
-    parser.add_argument(
-        "--dry-run", 
-        action="store_true", 
-        help="Режим проверки без реальной перезагрузки"
-    )
-
+    parser.add_argument("--hosts", type=str, help="Список хостов через запятую")
+    parser.add_argument("--file", type=str, help="Путь к файлу со списком хостов")
+    parser.add_argument("--dry-run", action="store_true", help="Режим проверки")
+    parser.add_argument("--oarm", action="store_true", help="Использовать OARM-скрипт (автосохранение Office)")
     return parser.parse_args()
+
 
 def load_hosts_from_file(file_path: str) -> list[str]:
     """Читает хосты из файла, игнорируя пустые строки."""
@@ -56,7 +41,6 @@ def load_hosts_from_file(file_path: str) -> list[str]:
     if not path.exists():
         print(f"Ошибка: файл {file_path} не найден.")
         sys.exit(1)
-        
     hosts = []
     with open(path, 'r', encoding='utf-8') as f:
         for line in f:
@@ -65,31 +49,28 @@ def load_hosts_from_file(file_path: str) -> list[str]:
                 hosts.append(host)
     return hosts
 
-def create_tasks(hosts_list: list[str], run_id: str, dry_run: bool) -> list[RebootTask]:
+
+def create_tasks(hosts_list: list[str], run_id: str, dry_run: bool, oarm: bool) -> list[RebootTask]:
     """Превращает список строк в список объектов RebootTask."""
     tasks = []
     for host in hosts_list:
         task = RebootTask(
-            host=host.upper(), 
+            host=host.upper(),
             run_id=run_id,
-            dry_run=dry_run
+            dry_run=dry_run,
+            oarm=oarm
         )
         tasks.append(task)
-    
-    
     return tasks
+
 
 def main():
     args = parse_args()
-    
     hosts_list = []
-    
-    # 1. Определяем источник хостов
+
     if args.hosts:
-        # Если передан --hosts, разбиваем строку по запятой
         hosts_list = [h.strip() for h in args.hosts.split(",") if h.strip()]
     elif args.file:
-        # Если передан --file, читаем из файла
         hosts_list = load_hosts_from_file(args.file)
     else:
         print("Ошибка: необходимо указать хосты через --hosts или --file")
@@ -99,57 +80,38 @@ def main():
         print("Ошибка: список хостов пуст.")
         sys.exit(1)
 
-    # STUB:
-    run_id = "manual-run-001" 
-    
-    print(f"Запуск режима: {'DRY-RUN' if args.dry_run else 'REAL'}")
+    run_id = "manual-run-001"
+    mode_str = "OARM" if args.oarm else "STANDARD"
+    print(f"Запуск режима: {'DRY-RUN' if args.dry_run else 'REAL'} [{mode_str}]")
     print(f"Найдено хостов: {len(hosts_list)}")
     print("-" * 30)
 
-    # 2. Создаем задачи
-    tasks = create_tasks(hosts_list, run_id, args.dry_run)
+    tasks = create_tasks(hosts_list, run_id, args.dry_run, args.oarm)
     max_tasks = min(5, len(tasks))
     print(f"Обработка {len(tasks)} задач в {max_tasks} потока...")
     print("-" * 30)
 
-    
-    results = [] # Сбор результатов
+    results = []
     with ThreadPoolExecutor(max_workers=max_tasks) as executor:
-        # Отдаем задачи курьерам. 
-        # executor.submit возвращает "обещание" (Future), что результат скоро будет
         future_to_task = {
-            executor.submit(process_task, task, ALLOWED_HOSTS): task 
+            executor.submit(process_task, task, ALLOWED_HOSTS): task
             for task in tasks
         }
-
-        # as_completed ждет, пока ЛЮБОЙ курьер вернется с результатом
         for future in as_completed(future_to_task):
-            result = future.result() # Забираем готовый RebootResult у курьера
-            
-            # Записываем результат в ЖУРНАЛ (лог)
+            result = future.result()
             log_result(result)
             results.append(result)
-            
-            # Выводим результат в консоль
             print(f"[{result.status.value}] {result.host}: {result.message}")
 
-    # === БЛОК ИТОГОВОЙ СВОДКИ ===
     print("\n" + "=" * 40)
     print("ИТОГОВАЯ СВОДКА")
     print("=" * 40)
     print(f"Всего обработано: {len(results)}")
-
-    # Считаем, сколько каких статусов получилось
-    # Counter пройдется по списку и сделает словарь: {'SKIPPED': 2, 'NOT_ALLOWED': 1}
     status_counts = Counter(result.status.value for result in results)
-
     for status, count in status_counts.items():
         print(f"{status}: {count}")
 
-    # Находим хосты, которые завершились с ошибкой (не SKIPPED и не REBOOT_CONFIRMED)
-    # Подсказка: используй list comprehension
     failed_results = [r for r in results if r.status not in (RebootStatus.SKIPPED, RebootStatus.REBOOT_CONFIRMED)]
-
     if failed_results:
         print("\nТРЕБУЮТ ВНИМАНИЯ:")
         for r in failed_results:
