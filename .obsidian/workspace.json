@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pc-reboot-chatbot-v.1/PLAN FOR V.1.0.md",
+                "file": "pc-reboot-chatbot-v.1/ТЗ PCR V.1.0.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PLAN FOR V.1.0"
+              "title": "ТЗ PCR V.1.0"
             }
           },
           {
@@ -55,16 +55,44 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ТЗ.md",
+                "file": "pc-reboot-chatbot-v.1/DEEP- Console PROC.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ТЗ"
+              "title": "DEEP- Console PROC"
+            }
+          },
+          {
+            "id": "9141f5971c32f21c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "pc-reboot-chatbot-v.1/МОДЕЛИ.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "МОДЕЛИ"
+            }
+          },
+          {
+            "id": "3d1480fd0f534bff",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "pc-reboot-chatbot-v.1/АРХ v.2.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "АРХ v.2"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -231,23 +259,43 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "8d70da91b06ae897",
+  "active": "3d1480fd0f534bff",
   "lastOpenFiles": [
-    "pc-reboot-chatbot-v.1/^PROMPT HERE.txt",
-    "pc-reboot-chatbot-v.1/^PROMPT HERE",
-    "mermaid-1786441992150.png",
-    "pc-reboot-chatbot-v.1/PLAN FOR V.1.0.md",
-    "pc-reboot-chatbot-v.1/logs",
-    "pc-reboot-chatbot-v.1/core/reboot.py",
-    "pc-reboot-chatbot-v.1/core",
-    "pc-reboot-chatbot-v.1/main.py",
-    "pc-reboot-chatbot-v.1/cli.py",
-    "pc-reboot-chatbot-v.1/Новая папка",
-    "pc-reboot-chatbot-v.1",
+    "Текстовый документ.txt",
+    "gi",
     "Новая папка",
+    "g",
+    "pc-reboot-chatboot-v.2/ТЗ PCR V.1.0.md",
+    "pc-reboot-chatboot-v.2/ПРЕЧЕК хостов.md",
+    "pc-reboot-chatboot-v.2/МОДЕЛИ.md",
+    "pc-reboot-chatboot-v.2/АРХ v.2.md",
+    "pc-reboot-chatboot-v.2/АРХ CONFRMD v.1-1.2.md",
+    "pc-reboot-chatboot-v.2/V. 1.0 SYST&ANLZ.md",
+    "pc-reboot-chatboot-v.2/PLAN FOR V.1.0.md",
+    "pc-reboot-chatboot-v.2/PCReboot_1.2.spec",
+    "pc-reboot-chatboot-v.2/PCReboot v2.0_ Проектирование отчужденного ядра на WinRM для многоплатформенной автоматизации.pdf",
+    "pc-reboot-chatboot-v.2/PCReboot v2.0_ Проектирование отчужденного ядра на WinRM для многоплатформенной автоматизации.md",
+    "pc-reboot-chatboot-v.2/main.py",
+    "pc-reboot-chatboot-v.2/file.txt",
+    "pc-reboot-chatboot-v.2/DEEP- WinRM.md",
+    "pc-reboot-chatboot-v.2/DEEP- Console PROC.md",
+    "pc-reboot-chatboot-v.2/cli.py",
+    "pc-reboot-chatboot-v.2/allowed_hosts.txt",
+    "pc-reboot-chatboot-v.2/^PROMPT HERE.txt",
+    "pc-reboot-chatbot-v.1/АРХ CONFRMD v.1-1.2.md",
+    "pc-reboot-chatbot-v.1/АРХ v.2.md",
+    "pc-reboot-chatbot-v.1/ПРЕЧЕК хостов.md",
+    "pc-reboot-chatbot-v.1/МОДЕЛИ.md",
+    "очерки....md",
+    "pc-reboot-chatbot-v.1/V. 1.0 SYST&ANLZ.md",
     "АРХИТЕКТУРА.md",
-    "core/reboot.py",
+    "pc-reboot-chatbot-v.1/PLAN FOR V.1.0.md",
+    "pc-reboot-chatbot-v.1/DEEP- Console PROC.md",
+    "pc-reboot-chatbot-v.1/DEEP- WinRM.md",
+    "pc-reboot-chatbot-v.1/PCReboot v2.0_ Проектирование отчужденного ядра на WinRM для многоплатформенной автоматизации.md",
+    "pc-reboot-chatbot-v.1/ТЗ PCR V.1.0.md",
     "ТЗ.md",
+    "mermaid-1786441992150.png",
     "Git & Github - Правила пушей.md",
     "Pasted image 20260811125236.png",
     "PLAN.md",
