@@ -63,3 +63,4 @@ def log_result(result: RebootResult, log_dir: str = "logs") -> None:
     # 4. Дописываем строку в файл (режим 'a' = append)
     with open(file_path, "a", encoding="utf-8") as f:
         f.write(json_line + "\n")
+        
