@@ -7,6 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from core.models import RebootTask, RebootStatus
 from core.reboot import process_task
 from core.logger import log_result
+from datetime import datetime
 
 
 def load_allowed_hosts(file_path: str = "allowed_hosts.txt") -> set[str]:
@@ -27,8 +28,9 @@ ALLOWED_HOSTS = load_allowed_hosts()
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="PCReboot CLI v2.0")
-    parser.add_argument("--hosts", type=str, help="Список хостов через запятую")
+    parser = argparse.ArgumentParser(description="PCReboot CLI")
+    #HOLD: parser.add_argument("--hosts", type=str, help="Список хостов через запятую")
+    parser.add_argument("--hosts", nargs='+', type=str, help="Список хостов через пробел")
     parser.add_argument("--file", type=str, help="Путь к файлу со списком хостов")
     parser.add_argument("--dry-run", action="store_true", help="Режим проверки")
     parser.add_argument("--oarm", action="store_true", help="Использовать OARM-скрипт (автосохранение Office)")
@@ -69,7 +71,7 @@ def main():
     hosts_list = []
 
     if args.hosts:
-        hosts_list = [h.strip() for h in args.hosts.split(",") if h.strip()]
+        hosts_list = [h.strip() for h in args.hosts if h.strip()]
     elif args.file:
         hosts_list = load_hosts_from_file(args.file)
     else:
@@ -80,7 +82,7 @@ def main():
         print("Ошибка: список хостов пуст.")
         sys.exit(1)
 
-    run_id = "manual-run-001"
+    run_id = datetime.now().strftime("run-%Y%m%d-%H%M%S")
     mode_str = "OARM" if args.oarm else "STANDARD"
     print(f"Запуск режима: {'DRY-RUN' if args.dry_run else 'REAL'} [{mode_str}]")
     print(f"Найдено хостов: {len(hosts_list)}")
@@ -111,7 +113,12 @@ def main():
     for status, count in status_counts.items():
         print(f"{status}: {count}")
 
-    failed_results = [r for r in results if r.status not in (RebootStatus.SKIPPED, RebootStatus.REBOOT_CONFIRMED)]
+    GOOD_STATUSES = (
+        RebootStatus.SKIPPED,
+        RebootStatus.COMMAND_SENT,
+        RebootStatus.REBOOT_CONFIRMED
+    )
+    failed_results = [r for r in results if r.status not in GOOD_STATUSES]
     if failed_results:
         print("\nТРЕБУЮТ ВНИМАНИЯ:")
         for r in failed_results:
