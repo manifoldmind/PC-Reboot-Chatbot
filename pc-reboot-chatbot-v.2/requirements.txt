@@ -1,0 +1,5 @@
+# PCReboot MVP
+# Все зависимости — стандартная библиотека Python
+# Требуется Python >= 3.9
+pyinstaller
+requests
