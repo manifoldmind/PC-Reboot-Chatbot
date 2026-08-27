@@ -25,8 +25,8 @@ class NaumenClient:
             "Accept": "application/json"
         }
         
-        
-    # Далее - QUE:PROC:Как идентифицируем в Naumen пользователя, который обращается как клиент?
+    #SOLVED:    
+    # Далее - Как идентифицируем в Naumen пользователя, который обращается как клиент?
     def get_user_assets_by_email(self, user_identifier: str) -> List[str]:
         """
         Возвращает список hostname'ов (в верхнем регистре), 
@@ -85,6 +85,27 @@ class NaumenClient:
             if hasattr(e, 'response') and e.response is not None:
                 print(f"Ответ сервера (статус {e.response.status_code}): {e.response.text[:200]}")
             return []
+        
+        #STUB-TEST:
+        def _mock_get_assets(self, user_identifier: str) -> List[str]:
+            """
+            Заглушка для демонстрации логики.
+            Возвращает список hostname'ов (в верхнем регистре), 
+            закрепленных за пользователем (по login или email).
+            """
+            mock_db = {
+                "test.user@nsd.ru": ["OARM-1224.NSD.RU", "OARM-1532.NSD.RU", "WIN10-TEST.NSD.RU"], 
+            }
+            
+            return [targ_host.upper() for targ_host in mock_db.get(user_identifier.lower(), [])]
+            
+def get_naumen_client() -> NaumenClient:
+    """
+    Создает и возвращает экземпляр NaumenClient с настройками из переменных окружения.
+    """
+    url = os.getenv("NAUMEN_BASE_URL", "https://sd.moex.com/sd")
+    token = os.getenv("NAUMEN_TOKEN", "mock-access-key-12345")
+    use_mock = os.getenv("NAUMEN_USE_MOCK", "True").lower() == "true"
+    
+    return NaumenClient(base_url=url, token=token, use_mock=use_mock)
 
-        
-        
