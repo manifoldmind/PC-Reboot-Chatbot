@@ -17,3 +17,5 @@ Thumbs.db
 .DS_Store
 
 allowed_hosts.txt
+
+.obsidian
