@@ -27,105 +27,177 @@ class NaumenClient:
         # Ожидаемый ID организации из SQL-запроса
         self.expected_org_id = 2539408
         
-        
+    # ============================================================
+    # ПУБЛИЧНЫЙ МЕТОД
+    # ============================================================    
     #SOLVED:    
     # Далее - Как идентифицируем в Naumen пользователя, который обращается как клиент?
-    def get_user_assets_by_email(self, user_identifier: str) -> List[str]:
+    def get_user_assets_by_email(self, user_email: str) -> List[str]:
         """
         Возвращает список hostname'ов (в верхнем регистре), 
         принадлежащих организации и соответствующих правилам валидации.
         """
+        #STUB:
         if self.use_mock:
-            return self._mock_get_assets(user_identifier)
+            return self._mock_get_assets(user_email)
         
         # --- РЕАЛЬНЫЙ ЗАПРОС К NAUMEN API (Структура по официальной документации) ---
+        # ШАГ 1: Найти UUID сотрудника по email
+        employee_uuid = self._find_employee_uuid_by_email(user_email)
+        if not employee_uuid:
+            print(f"⚠️ Сотрудник с email '{user_email}' не найден в Naumen.")
+            return []
+
+        print(f"✅ Найден сотрудник UUID: {employee_uuid}")
+
+        # ШАГ 2: Найти ПК этого сотрудника
+        return self._find_computers_by_employee(employee_uuid)
+    
+    # ============================================================
+    # ШАГ 1: Поиск UUID сотрудника по email
+    # ============================================================
+        # ============================================================
+    # ШАГ 1: Поиск UUID сотрудника по email
+    # ============================================================
+    def _find_employee_uuid_by_email(self, user_email: str) -> str | None:
+        """
+        Ищет UUID сотрудника по его email.
+        В Naumen email хранится в объекте 'account', связанном с 'employee'.
+        Пробуем несколько вариантов FQN, т.к. точное название зависит от настройки.
+        """
+        # Варианты FQN для поиска (от наиболее вероятного к менее)
+        # В SQL-запросе видно: tbl_account имеет поле 'email' и ссылку 'employee'
+        candidate_fqns = [
+            "account",           # tbl_account
+            "employee",          # tbl_employee (если email хранится прямо там)
+            "account$employee",  # возможный кастомный FQN
+        ]
+
+        for fqn in candidate_fqns:
+            try:
+                # Фильтр по email
+                filter_json = f'{{"email": "{user_email}"}}'
+                encoded_filter = urllib.parse.quote(filter_json)
+
+                endpoint = f"{self.base_url}/services/rest/find/{fqn}/{encoded_filter}"
+                params = {
+                    "accessKey": self.access_key,
+                    "limit": 1,
+                    "attrs": "UUID,email,employee"
+                }
+
+                response = requests.get(
+                    endpoint,
+                    params=params,
+                    timeout=10,
+                    verify=False
+                )
+                response.raise_for_status()
+                data = response.json()
+
+                if data and isinstance(data, list) and len(data) > 0:
+                    item = data[0]
+                    # Если нашли сразу в account — берём поле 'employee' (ссылка на сотрудника)
+                    employee_ref = item.get('employee')
+                    if isinstance(employee_ref, dict) and 'UUID' in employee_ref:
+                        return employee_ref['UUID']
+                    elif isinstance(employee_ref, str):
+                        return employee_ref
+                    # Если email прямо в employee — берём UUID самого объекта
+                    elif 'UUID' in item:
+                        return item['UUID']
+
+            except requests.exceptions.RequestException as e:
+                print(f"  Пробуем следующий FQN после ошибки на '{fqn}': {e}")
+                continue
+
+        print(f" Не удалось найти сотрудника по email '{user_email}' ни в одном из FQN.")
+        return None
+    
+    # ============================================================
+    # ШАГ 2: Поиск ПК по UUID сотрудника
+    # ============================================================
+    def _find_computers_by_employee(self, employee_uuid: str) -> List[str]:
+        """
+        Ищет все ПК/ВМ, где поле 'employee' ссылается на заданный UUID.
+        Фильтрует по организации и домену .nsd.ru.
+        """
         try:
-            # WARN :TODO: Виртуальные машины (Virtual User Machine) и Linux (RedOS) 
-            # могут иметь атрибут title без домена (например, "win10-1234" или "redos-5678").
-            # В версии v2.1 необходимо добавить логику:
-            # 1. Запрашивать атрибут 'model' или 'type' (например, "Virtual User Machine").
-            # 2. Если это ВМ или Linux, применять альтернативные правила валидации title 
-            #    (например, проверка по внутреннему реестру имен или суффиксам).
-            # Пока мы строго фильтруем только по наличию суффикса ".nsd.ru".
-
-            # Запрашиваем UUID, title и organization. 
-            # attrs ограничивает выдачу, защищая от 504 ошибки.
-            params = {
-                "accessKey": self.access_key,
-                "limit": 1000,  # Безопасный лимит
-                "attrs": "UUID,title,organization"
-            }
-
-            # FQN для конфигурационных единиц в Naumen обычно cmdb$ci
             fqn = "cmdb$ci"
-            
-            # Фильтр в формате JSON, как в документации Naumen.
-            # Примечание: возможно, потребуется 'employee.email' вместо 'employee.login', 
-            # уточни это по результатам Postman-теста.
-            filter_json = f'{{"employee.login": "{user_identifier}"}}'
-            
-            # URL-кодируем фильтр, чтобы избежать проблем с символами { } " :
-            # encoded_filter = urllib.parse.quote(filter_json)
-            
-            # Формируем URL согласно документации: /find/{fqn}/{filter}?params...
-            endpoint = f"{self.base_url}/services/rest/find/{fqn}"
-            
-            # Параметры для защиты от 504 ошибки (строго по документации!)
+
+            # Фильтр: employee = UUID сотрудника
+            filter_json = f'{{"employee": "{employee_uuid}"}}'
+            encoded_filter = urllib.parse.quote(filter_json)
+
+            endpoint = f"{self.base_url}/services/rest/find/{fqn}/{encoded_filter}"
+
             params = {
                 "accessKey": self.access_key,
-                "limit": 100,  # Ограничиваем выдачу
-                "attrs": "UUID,title,organization"
+                "limit": 1000,
+                "attrs": "UUID,title,organization,classification"
             }
-            
+
             response = requests.get(
                 endpoint,
                 params=params,
                 timeout=15,
-                verify=False # Отключаем проверку SSL для внутренних корпоративных сертификатов
+                verify=False
             )
-            
-            
-            
-            # Отключаем предупреждения о небезопасном запросе (т.к. verify=False)
-            import urllib3
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
             response.raise_for_status()
             data = response.json()
 
-            # Naumen возвращает список объектов. Извлекаем поле 'title' (это hostname)
             hostnames = []
             for item in data:
                 if not isinstance(item, dict):
                     continue
-                
+
                 title = str(item.get('title', '')).strip().upper()
-                org_id = str(item.get('organization', {}).get('id', '')).strip()
-                
-                # Проверка домена - строго nsd.ru
-                if title.endswith('.NSD.RU'):
+                org_data = item.get('organization', {})
+
+                # !WARN: Пропускаем хосты БЕЗ домена .nsd.ru
+                if not title.endswith('.NSD.RU'):
                     continue
-                
-                # 2. Проверка организации
-                # В Naumen поле organization может быть числом (2539408) или ссылкой (UUID/словарь).
-                # Если это число, проверяем напрямую. Если ссылка, пока пропускаем проверку, 
-                # полагаясь на то, что токен ТУЗ уже ограничен этой организацией.
-                is_valid_org = False
-                if isinstance(org_id, str) and org_id.isdigit():
-                    is_valid_org = (int(org_id) == self.expected_org_id)
-                    
-                if is_valid_org:
-                    hostnames.append(title.upper())
-            # Удаляем дубликаты, если они вдруг попались, и сортируем для порядка
+
+                # Проверка организации
+                is_valid_org = self._check_organization(org_data)
+
+                # !TODO v2.1: Виртуальные машины (Virtual User Machine) и Linux (RedOS)
+                # могут иметь title БЕЗ домена (например, "win10-1234" или "redos-5678").
+                # Необходимо:
+                # 1. Запрашивать атрибут 'model' или 'type' или 'classification'.
+                # 2. Если это ВМ/ Linux — применять альтернативные правила валидации
+                #    (проверка по внутреннему реестру имён или суффиксам).
+                # 3. Возможно, использовать поле 'classification' (в SQL: b."classification" = 2761404)
+                #    для фильтрации только нужных типов устройств.
+
+                if is_valid_org and title:
+                    hostnames.append(title)
+
             return sorted(list(set(hostnames)))
 
-        
         except requests.exceptions.RequestException as e:
-            print(f"❌ Ошибка при запросе к Naumen API: {e}")
+            print(f"❌ Ошибка при запросе ПК сотрудника: {e}")
             if hasattr(e, 'response') and e.response is not None:
-                print(f"Ответ сервера (статус {e.response.status_code}): {e.response.text[:200]}")
+                print(f"   Статус {e.response.status_code}: {e.response.text[:200]}")
             return []
-        
+    
+    # ============================================================
+    # ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
+    # ============================================================
+    def _check_organization(self, org_data) -> bool:
+        """Проверяет, что ПК принадлежит нужной организации."""
+        if isinstance(org_data, dict):
+            org_id_str = str(org_data.get('id', '')).strip()
+            if org_id_str.isdigit():
+                return int(org_id_str) == self.expected_org_id
+            # Если org_data содержит UUID — пока доверяем (токен ТУЗ ограничен)
+            return True
+        elif isinstance(org_data, int):
+            return org_data == self.expected_org_id
+        else:
+            # Если organization не пришла (нет прав на атрибут) — доверяем домену
+            return True
+
     #STUB-TEST:
     def _mock_get_assets(self, user_identifier: str) -> List[str]:
         """
