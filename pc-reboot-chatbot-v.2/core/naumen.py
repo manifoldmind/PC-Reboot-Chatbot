@@ -10,14 +10,14 @@ import urllib
 
 class NaumenClient:
     # Обязательные поля, без которых нет смысла в классе
-    def __init__(self, base_url: str, token: str, use_mock: bool = True):
+    def __init__(self, base_url: str, access_key: str, use_mock: bool = True):
         """
         :param base_url: Базовый URL API Naumen
         :param token: Токен авторизации технической учетной записи
         :param use_mock: Если True, использует тестовые данные вместо реального запроса
         """
         self.base_url = base_url.rstrip('/') # "https://sd.moex.com/sd/operator"
-        self.token = token
+        self.token = access_key
         self.use_mock = use_mock
         self.headers = {
             "Authorization": f"Bearer {self.token}",
@@ -212,13 +212,11 @@ class NaumenClient:
         return [targ_host.upper() for targ_host in mock_db.get(user_identifier.lower(), [])]
             
 def get_naumen_client() -> NaumenClient:
-    """
-    Создает и возвращает экземпляр NaumenClient с настройками из переменных окружения.
-    """
+    """Создает клиент Naumen из переменных окружения."""
     url = os.getenv("NAUMEN_BASE_URL", "https://sd.moex.com/sd")
-    token = os.getenv("NAUMEN_TOKEN", "mock-access-key-12345")
-    use_mock = os.getenv("NAUMEN_USE_MOCK", "True").lower() == "true"
-    # WARN: use_mock=False означает, что теперь идут РЕАЛЬНЫЕ запросы к Naumen!
-    # Убедись, что переменная окружения NAUMEN_API_TOKEN установлена корректно.
-    return NaumenClient(base_url=url, token=token, use_mock=use_mock)
+    key = os.getenv("NAUMEN_TOKEN", "mock-access-key-12345")
+    use_mock_str = os.getenv("NAUMEN_USE_MOCK", "True").lower()
+    use_mock = use_mock_str == "true"
+
+    return NaumenClient(base_url=url, access_key=key, use_mock=use_mock)
 
