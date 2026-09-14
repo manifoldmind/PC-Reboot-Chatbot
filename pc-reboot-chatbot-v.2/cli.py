@@ -34,6 +34,7 @@ def parse_args():
     parser.add_argument("--file", type=str, help="Путь к файлу со списком хостов")
     parser.add_argument("--dry-run", action="store_true", help="Режим проверки")
     parser.add_argument("--oarm", action="store_true", help="Использовать OARM-скрипт (автосохранение Office)")
+    parser.add_argument("--email", type=str, help="Email пользователя для получения списка ПК из Naumen")
     return parser.parse_args()
 
 
@@ -70,16 +71,40 @@ def main():
     args = parse_args()
     hosts_list = []
 
-    if args.hosts:
-        hosts_list = [h.strip() for h in args.hosts if h.strip()]
+    # 1. Если указан email, получаем список из Naumen
+    if args.email:
+        from core.naumen import get_naumen_client
+        print(f"🔍 Запрос активов Naumen для пользователя: {args.email}...")
+        
+        client = get_naumen_client()
+        naumen_hosts = client.get_user_assets_by_email(args.email)
+        
+        if not naumen_hosts:
+            print(f"⚠️ В Naumen не найдено ПК для пользователя {args.email}.")
+            sys.exit(1)
+            
+        print(f"✅ Naumen вернул {len(naumen_hosts)} хостов.")
+        
+        # Если при этом передан --hosts, делаем пересечение (запрошенные И доступные)
+        if args.hosts:
+            requested = set(h.strip().upper() for h in args.hosts)
+            hosts_list = [h for h in naumen_hosts if h in requested]
+            print(f"🎯 Из запрошенных хостов пользователю принадлежат: {', '.join(hosts_list)}")
+        else:
+            # Если --hosts не передан, берем все ПК пользователя
+            hosts_list = naumen_hosts
+
+    # 2. Если email не указан, работаем по старой схеме (--hosts или --file)
+    elif args.hosts:
+        hosts_list = [h.strip().upper() for h in args.hosts if h.strip()]
     elif args.file:
-        hosts_list = load_hosts_from_file(args.file)
+        hosts_list = [h.strip().upper() for h in load_hosts_from_file(args.file)]
     else:
-        print("Ошибка: необходимо указать хосты через --hosts или --file")
+        print("Ошибка: необходимо указать --email, --hosts или --file")
         sys.exit(1)
 
     if not hosts_list:
-        print("Ошибка: список хостов пуст.")
+        print("Ошибка: итоговый список хостов пуст.")
         sys.exit(1)
 
     run_id = datetime.now().strftime("run-%Y%m%d-%H%M%S")

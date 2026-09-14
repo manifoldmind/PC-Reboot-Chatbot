@@ -6,21 +6,24 @@
 from typing import List
 import requests
 import os
-import urllib
+import urllib3
+import urllib.parse
 
+# Отключаем предупреждения о небезопасном SSL (для внутренних корпоративных сертификатов)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class NaumenClient:
     # Обязательные поля, без которых нет смысла в классе
     def __init__(self, base_url: str, access_key: str, use_mock: bool = True):
         """
         :param base_url: Базовый URL API Naumen
-        :param token: Токен авторизации технической учетной записи
+        :param access_key: Токен авторизации технической учетной записи
         :param use_mock: Если True, использует тестовые данные вместо реального запроса
         """
         self.base_url = base_url.rstrip('/') # "https://sd.moex.com/sd/operator"
-        self.token = access_key
+        self.access_key = access_key
         self.use_mock = use_mock
         self.headers = {
-            "Authorization": f"Bearer {self.token}",
+            "Authorization": f"Bearer {self.access_key}",
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
@@ -54,9 +57,6 @@ class NaumenClient:
         return self._find_computers_by_employee(employee_uuid)
     
     # ============================================================
-    # ШАГ 1: Поиск UUID сотрудника по email
-    # ============================================================
-        # ============================================================
     # ШАГ 1: Поиск UUID сотрудника по email
     # ============================================================
     def _find_employee_uuid_by_email(self, user_email: str) -> str | None:
