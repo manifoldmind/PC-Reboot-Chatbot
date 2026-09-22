@@ -60,5 +60,3 @@ missing module named brotlicffi - imported by urllib3.util.request (optional), u
 missing module named simplejson - imported by requests.compat (conditional, optional)
 missing module named socks - imported by urllib3.contrib.socks (optional)
 missing module named chardet - imported by requests (optional)
-missing module named 'IPython.core' - imported by dotenv.ipython (top-level)
-missing module named IPython - imported by dotenv.ipython (top-level)

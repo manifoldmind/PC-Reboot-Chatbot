@@ -8,7 +8,8 @@ from core.models import RebootTask, RebootStatus
 from core.reboot import process_task
 from core.logger import log_result
 from datetime import datetime
-
+from dotenv import load_dotenv
+load_dotenv()  # Загружает переменные из .env файла рядом с .exe
 
 def load_allowed_hosts(file_path: str = "allowed_hosts.txt") -> set[str]:
     """Загружает белый список хостов из файла."""
@@ -67,7 +68,9 @@ def create_tasks(hosts_list: list[str], run_id: str, dry_run: bool, oarm: bool) 
     return tasks
 
 
-def main():
+def main():    
+    args = parse_args()
+    # ... остальной код
     args = parse_args()
     hosts_list = []
 
@@ -83,16 +86,29 @@ def main():
             print(f"⚠️ В Naumen не найдено ПК для пользователя {args.email}.")
             sys.exit(1)
             
-        print(f"✅ Naumen вернул {len(naumen_hosts)} хостов.")
+        print(f"✅ Naumen вернул {len(naumen_hosts)} хостов, закрепленных за пользователем:")
+        for i, host in enumerate(naumen_hosts, 1):
+            print(f"   {i}. {host}")
         
-        # Если при этом передан --hosts, делаем пересечение (запрошенные И доступные)
+        # Если при этом передан --hosts, делаем пересечение (безопасная перезагрузка)
         if args.hosts:
             requested = set(h.strip().upper() for h in args.hosts)
             hosts_list = [h for h in naumen_hosts if h in requested]
-            print(f"🎯 Из запрошенных хостов пользователю принадлежат: {', '.join(hosts_list)}")
+            
+            if not hosts_list:
+                print(f"\n❌ Ошибка: Ни один из запрошенных хостов не принадлежит пользователю {args.email}.")
+                sys.exit(1)
+                
+            print(f"\n🎯 К перезагрузке допущены (прошли проверку прав): {', '.join(hosts_list)}")
+            # Продолжаем выполнение (идем дальше к create_tasks)
+            
         else:
-            # Если --hosts не передан, берем все ПК пользователя
-            hosts_list = naumen_hosts
+            # Если --hosts НЕ передан, это режим ИНВЕНТАРИЗАЦИИ.
+            # Мы просто выводим список и завершаем работу, ничего не перезагружая!
+            print(f"\n💡 Режим инвентаризации. Перезагрузка не выполнена.")
+            print(f"Чтобы перезагрузить конкретный ПК, используйте команду:")
+            print(f"   PCReboot.exe --email {args.email} --hosts <ИМЯ_ПК>")
+            sys.exit(0) # Чистый выход без ошибок
 
     # 2. Если email не указан, работаем по старой схеме (--hosts или --file)
     elif args.hosts:

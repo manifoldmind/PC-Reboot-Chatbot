@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='PCReboot_v2',
+    name='PCReboot',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
