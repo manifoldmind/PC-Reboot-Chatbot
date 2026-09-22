@@ -72,44 +72,100 @@ class NaumenClient:
             "employee",          # tbl_employee (если email хранится прямо там)
             "account$employee",  # возможный кастомный FQN
         ]
+        
+        # ВАЖНО: Добавили email_employee на основе твоего SQL-запроса!
+        candidate_email_attrs = ["email_employee", "email", "login", "mail"]
+        #HOLD:
+        # for fqn in candidate_fqns:
+        #     try:
+        #         # Фильтр по email
+        #         filter_json = f'{{"email": "{user_email}"}}'
+        #         encoded_filter = urllib.parse.quote(filter_json)
 
+        #         endpoint = f"{self.base_url}/services/rest/find/{fqn}/{encoded_filter}"
+        #         params = {
+        #             "accessKey": self.access_key,
+        #             "limit": 1,
+        #             "attrs": "UUID,email,employee"
+        #         }
+
+        #         response = requests.get(
+        #             endpoint,
+        #             params=params,
+        #             timeout=10,
+        #             verify=False
+        #         )
+        #         response.raise_for_status()
+        #         data = response.json()
+
+        #         if data and isinstance(data, list) and len(data) > 0:
+        #             item = data[0]
+        #             # Если нашли сразу в account — берём поле 'employee' (ссылка на сотрудника)
+        #             employee_ref = item.get('employee')
+        #             if isinstance(employee_ref, dict) and 'UUID' in employee_ref:
+        #                 return employee_ref['UUID']
+        #             elif isinstance(employee_ref, str):
+        #                 return employee_ref
+        #             # Если email прямо в employee — берём UUID самого объекта
+        #             elif 'UUID' in item:
+        #                 return item['UUID']
+
+        #     except requests.exceptions.RequestException as e:
+        #         print(f"  Пробуем следующий FQN после ошибки на '{fqn}': {e}")
+        #         continue
         for fqn in candidate_fqns:
-            try:
-                # Фильтр по email
-                filter_json = f'{{"email": "{user_email}"}}'
-                encoded_filter = urllib.parse.quote(filter_json)
-
-                endpoint = f"{self.base_url}/services/rest/find/{fqn}/{encoded_filter}"
-                params = {
-                    "accessKey": self.access_key,
-                    "limit": 1,
-                    "attrs": "UUID,email,employee"
-                }
-
-                response = requests.get(
-                    endpoint,
-                    params=params,
-                    timeout=10,
-                    verify=False
-                )
-                response.raise_for_status()
-                data = response.json()
-
-                if data and isinstance(data, list) and len(data) > 0:
-                    item = data[0]
-                    # Если нашли сразу в account — берём поле 'employee' (ссылка на сотрудника)
-                    employee_ref = item.get('employee')
-                    if isinstance(employee_ref, dict) and 'UUID' in employee_ref:
-                        return employee_ref['UUID']
-                    elif isinstance(employee_ref, str):
-                        return employee_ref
-                    # Если email прямо в employee — берём UUID самого объекта
-                    elif 'UUID' in item:
-                        return item['UUID']
-
-            except requests.exceptions.RequestException as e:
-                print(f"  Пробуем следующий FQN после ошибки на '{fqn}': {e}")
-                continue
+            for attr_name in candidate_email_attrs:
+                try:
+                    # Формируем фильтр, например: {"email_employee": "user@nsd.ru"}
+                    filter_json = f'{{"{attr_name}": "{user_email}"}}'
+                    encoded_filter = urllib.parse.quote(filter_json)
+                    
+                    endpoint = f"{self.base_url}/services/rest/find/{fqn}/{encoded_filter}"
+                    params = {
+                        "accessKey": self.access_key,
+                        "limit": 1,
+                        "attrs": f"UUID,{attr_name},employee"
+                    }
+                    
+                    print(f"[DEBUG] Пробуем: FQN='{fqn}', атрибут='{attr_name}'")
+                    
+                    response = requests.get(
+                        endpoint,
+                        params=params,
+                        timeout=10,
+                        verify=False
+                    )
+                    
+                    if response.status_code == 200:
+                        data = response.json()
+                        # Показываем первые 150 символов ответа, чтобы понять структуру
+                        print(f"[DEBUG]   Ответ (200 OK): {str(data)[:150]}...")
+                        
+                        if data and isinstance(data, list) and len(data) > 0:
+                            item = data[0]
+                            
+                            # Вариант А: Мы нашли запись в 'account', и там есть ссылка 'employee'
+                            employee_ref = item.get('employee')
+                            if isinstance(employee_ref, dict) and 'UUID' in employee_ref:
+                                print(f"[DEBUG]   ✅ УСПЕХ! Найдена ссылка на сотрудника: {employee_ref['UUID']}")
+                                return employee_ref['UUID']
+                            elif isinstance(employee_ref, str):
+                                print(f"[DEBUG]   ✅ УСПЕХ! Найдена ссылка на сотрудника (строка): {employee_ref}")
+                                return employee_ref
+                            
+                            # Вариант Б: Мы нашли запись прямо в 'employee', и у нее есть свой UUID
+                            elif 'UUID' in item:
+                                print(f"[DEBUG]   ✅ УСПЕХ! Найдена запись сотрудника напрямую, UUID: {item['UUID']}")
+                                return item['UUID']
+                    else:
+                        print(f"[DEBUG]   Статус {response.status_code}: {response.text[:100]}")
+                        
+                except requests.exceptions.RequestException as e:
+                    print(f"[DEBUG]   Ошибка сети при запросе '{fqn}': {e}")
+                    continue
+                    
+        print(f"[DEBUG] ❌ Не удалось найти сотрудника по email '{user_email}' ни в одной комбинации.")
+        return None
 
         print(f" Не удалось найти сотрудника по email '{user_email}' ни в одном из FQN.")
         return None
