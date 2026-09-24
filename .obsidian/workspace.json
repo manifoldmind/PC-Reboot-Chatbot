@@ -83,12 +83,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pc-reboot-chatbot-v.2/!WARN.md",
+                "file": "pc-reboot-chatbot-v.2/Вспомогательный скрипт NAUMEN_REST.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "!WARN"
+              "title": "Вспомогательный скрипт NAUMEN_REST"
             }
           }
         ],
@@ -261,6 +261,8 @@
   },
   "active": "3d1480fd0f534bff",
   "lastOpenFiles": [
+    "pc-reboot-chatbot-v.2/!WARN.md",
+    "pc-reboot-chatbot-v.2/Вспомогательный скрипт NAUMEN_REST.md",
     "pc-reboot-chatbot-v.2/build/PCReboot_v2/EXE-00.toc",
     "pc-reboot-chatbot-v.2/build/PCReboot_v2/PKG-00.toc",
     "pc-reboot-chatbot-v.2/build/PCReboot_v2/PCReboot_v2.pkg",
@@ -271,9 +273,7 @@
     "pc-reboot-chatbot-v.2/build/PCReboot_v2/localpycs/pyimod02_importers.pyc",
     "pc-reboot-chatbot-v.2/build/PCReboot_v2/localpycs/struct.pyc",
     "pc-reboot-chatbot-v.2/build/PCReboot_v2/localpycs/pyimod01_archive.pyc",
-    "pc-reboot-chatbot-v.2/build/PCReboot_v2/localpycs",
     "pc-reboot-chatbot-v.2/АРХ v.2.md",
-    "pc-reboot-chatbot-v.2/!WARN.md",
     "От CLI-скрипта к системному решению_ проектирование и внедрение интеграции PCReboot v2.0 с CMDB Naumen.md",
     "pc-reboot-chatbot-v.2/PLAN FOR V.2.md",
     "pc-reboot-chatbot-v.2/PLAN FOR V.1.0.md",
